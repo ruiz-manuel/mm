@@ -18742,7 +18742,8 @@ void Player_Action_96(Player* this, PlayState* play) {
         s32 spDC;
         s32 spD8;
 
-        if (func_80840A30(play, this, &this->unk_B08, (this->doorType == PLAYER_DOORTYPE_STAIRCASE) ? 0.0f : 12.0f)) {
+        // Crashing into walls
+        if (func_80840A30(play, this, &this->unk_B08, (this->doorType == PLAYER_DOORTYPE_STAIRCASE) ? 0.0f : 12.0f)) { // DONT BREAK WALL speed < 12
             if (Player_Action_96 != this->actionFunc) {
                 return;
             }
@@ -18753,7 +18754,7 @@ void Player_Action_96(Player* this, PlayState* play) {
                 this->unk_B86[1] = 0;
                 this->actionVar1 = 3;
             }
-        } else if ((this->actor.bgCheckFlags & BGCHECKFLAG_WALL) && (this->unk_B08 >= 12.0f)) {
+        } else if ((this->actor.bgCheckFlags & BGCHECKFLAG_WALL) && (this->unk_B08 >= 12.0f)) { // BREAK WALL speed > 12
             s16 temp_v0 = this->currentYaw - BINANG_ADD(this->actor.wallYaw, 0x8000);
             s16 temp_v2;
             s32 var_a2 = ABS_ALT(temp_v0);
@@ -18774,7 +18775,7 @@ void Player_Action_96(Player* this, PlayState* play) {
             this->unk_B8E--;
         } else {
             Player_GetMovementSpeedAndYaw(this, &speedTarget, &yawTarget, SPEED_MODE_LINEAR, play);
-            speedTarget *= 2.6f;
+            speedTarget *= 2.6f; //2.6 orig mod
         }
 
         if (this->unk_B8C != 0) {
@@ -18783,7 +18784,7 @@ void Player_Action_96(Player* this, PlayState* play) {
         }
 
         if (this->unk_B86[1] != 0) {
-            speedTarget = 18.0f;
+            speedTarget = 36.0f; //18.0 orig mod
             Math_StepToC(&this->actionVar1, 4, 1);
 
             if ((this->stateFlags3 & PLAYER_STATE3_80000) && (!CHECK_BTN_ALL(sPlayerControlInput->cur.button, BTN_A) ||
@@ -18806,7 +18807,7 @@ void Player_Action_96(Player* this, PlayState* play) {
         spDC = speedTarget * 900.0f;
 
         Math_AsymStepToF(&this->unk_B10[0], (this->unk_B8A != 0) ? 1.0f : 0.0f, 0.8f, 0.05f);
-        if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
+        if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) { //Rolling on the grouind
             func_80857AEC(play, this);
             if (this->actionVar1 == 2) {
                 if (this->unk_B8A == 0) {
@@ -18841,9 +18842,9 @@ void Player_Action_96(Player* this, PlayState* play) {
 
                 if (this->unk_B86[1] == 0) {
                     this->unk_B0C = 0.0f;
-                    if (this->actionVar1 >= 0x36) {
-                        Magic_Consume(play, 2, MAGIC_CONSUME_GORON_ZORA);
-                        this->unk_B08 = 18.0f;
+                    if (this->actionVar1 >= 0x18) { // Enter boost mode --- orig 36 mod (how fast to enter boost)
+                        Magic_Consume(play, 2, MAGIC_CONSUME_GORON_ZORA); // Consume magic
+                        this->unk_B08 = 36.0f; //orig 18f mod
                         this->unk_B86[1] = 1;
                         this->stateFlags3 |= PLAYER_STATE3_80000;
                         func_8082E1F0(this, NA_SE_PL_GORON_BALL_CHARGE_DASH);
@@ -18903,6 +18904,7 @@ void Player_Action_96(Player* this, PlayState* play) {
                     f32 sp6C;
                     f32 var_fa1;
 
+                    //handle goron pound while rolling
                     if (this->unk_B86[1] == 0) {
                         if ((gSaveContext.magicState == MAGIC_STATE_IDLE) &&
                             (gSaveContext.save.saveInfo.playerData.magic >= 2) && (this->actionVar2 >= 0x36B0)) {
@@ -19004,7 +19006,7 @@ void Player_Action_96(Player* this, PlayState* play) {
                 spB0 = spA8 + spA0;
 
                 this->unk_B08 = sqrtf(SQ(spB4) + SQ(spB0));
-                this->unk_B08 = CLAMP_MAX(this->unk_B08, 18.0f);
+                this->unk_B08 = CLAMP_MAX(this->unk_B08, 36.0f); // MAX SPEED orig 16 mod
 
                 this->currentYaw = Math_Atan2S_XY(spB0, spB4);
             }
@@ -19028,7 +19030,7 @@ void Player_Action_96(Player* this, PlayState* play) {
             } else {
                 func_800AEF44(Effect_GetByIndex(this->meleeWeaponEffectIndex[2]));
             }
-        } else {
+        } else { // Rolling in the air
             Math_ScaledStepToS(&this->actor.shape.rot.z, 0, 0x190);
 
             this->unk_B86[0] = 0;
@@ -19038,7 +19040,7 @@ void Player_Action_96(Player* this, PlayState* play) {
 
                 this->unk_B08 = sqrtf(SQ(this->linearVelocity) + SQ(this->actor.velocity.y)) *
                                 ((this->linearVelocity >= 0.0f) ? 1.0f : -1.0f);
-                this->unk_B08 = CLAMP_MAX(this->unk_B08, 18.0f);
+                this->unk_B08 = CLAMP_MAX(this->unk_B08, 36.0f); // MAX SPEED orig 18.0 mod
             } else {
                 this->unk_B48 += this->actor.velocity.y * 0.005f;
                 if (this->actionVar1 == 1) {

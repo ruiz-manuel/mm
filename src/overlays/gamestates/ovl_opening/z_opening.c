@@ -11,17 +11,39 @@
 #include "z64view.h"
 #include "regs.h"
 
+// void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
+//     static s32 sOpeningEntrances[] = { ENTRANCE(CUTSCENE, 0), ENTRANCE(CUTSCENE, 1) };
+//     static s32 sOpeningCutscenes[] = { 0xFFFA, 0xFFFA };
+
+//     CLEAR_EVENTINF(EVENTINF_17);
+//     gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
+
+//     Sram_InitNewSave();
+
+//     gSaveContext.save.entrance = sOpeningEntrances[gOpeningEntranceIndex];
+//     gSaveContext.nextCutsceneIndex = gSaveContext.save.cutsceneIndex = sOpeningCutscenes[gOpeningEntranceIndex];
+//     gSaveContext.sceneLayer = 0;
+
+//     gSaveContext.save.time = CLOCK_TIME(8, 0);
+//     gSaveContext.save.day = 1;
+
+//     STOP_GAMESTATE(&this->state);
+//     SET_NEXT_GAMESTATE(&this->state, Play_Init, sizeof(PlayState));
+
+//     gSaveContext.save.playerForm = PLAYER_FORM_HUMAN;
+// }
+
 void TitleSetup_SetupTitleScreen(TitleSetupState* this) {
     static s32 sOpeningEntrances[] = { ENTRANCE(CUTSCENE, 0), ENTRANCE(CUTSCENE, 1) };
     static s32 sOpeningCutscenes[] = { 0xFFFA, 0xFFFA };
 
     CLEAR_EVENTINF(EVENTINF_17);
-    gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
+    gSaveContext.gameMode = GAMEMODE_NORMAL;
 
-    Sram_InitNewSave();
+    Sram_InitDebugSave();
 
-    gSaveContext.save.entrance = sOpeningEntrances[gOpeningEntranceIndex];
-    gSaveContext.nextCutsceneIndex = gSaveContext.save.cutsceneIndex = sOpeningCutscenes[gOpeningEntranceIndex];
+    gSaveContext.save.entrance = ENTRANCE(GORON_RACETRACK, 0); // sOpeningEntrances[gOpeningEntranceIndex];
+    gSaveContext.nextCutsceneIndex = gSaveContext.save.cutsceneIndex = 0; // sOpeningCutscenes[gOpeningEntranceIndex];
     gSaveContext.sceneLayer = 0;
 
     gSaveContext.save.time = CLOCK_TIME(8, 0);
